@@ -211,17 +211,13 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public void printAllCustomersAccounts(Customer customer) throws SQLException {
-        String sql = "SELECT accounts.account_number FROM accounts" +
-                " INNER JOIN registered ON accounts.id = registered.customer_id" +
-                " WHERE registered.customer_id = ?";
+        String sql = "SELECT accounts.account_number FROM accounts " +
+                        "INNER JOIN registered ON accounts.id = registered.account_id " +
+                        "WHERE registered.customer_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, customer.getId());
         //System.out.println(preparedStatement.toString());
         ResultSet resultSet = preparedStatement.executeQuery();
-
-        customer = new Customer();
-        // id | name      | username  | password | type
-        resultSet.next();
 
         while (resultSet.next()) {
             System.out.println(resultSet.getString(1));
