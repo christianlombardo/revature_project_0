@@ -36,7 +36,7 @@ public class Main {
                 System.out.println();
                 System.out.println("Press 1: Register for an account.");
                 System.out.println("Press 2: Customer Login");
-                System.out.println("Press 3: Employee Login");
+                //System.out.println("Press 3: Employee Login");
                 System.out.println("Press 4: Exit");
             }
             // display the main menu
@@ -85,7 +85,8 @@ public class Main {
                             customer.setPassword(password);
                             if (customerDao.customerLogin(customer)) {
                                 //login.customerPortal(scanner);
-                                customerDao.customerPortal(scanner);
+                                customer = customerDao.getCustomerByUsername(username);
+                                customerDao.customerPortal(scanner, customer);
                             } else {
                                 System.out.println();
                                 System.out.println("Check your username and password are correct.");

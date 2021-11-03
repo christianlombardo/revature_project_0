@@ -37,17 +37,17 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public void updateUser(Customer customer) throws SQLException {
+    public void updateCustomer(Customer customer) throws SQLException {
 
     }
 
     @Override
-    public void deleteUser(Customer customer) throws SQLException {
+    public void deleteCustomer(Customer customer) throws SQLException {
 
     }
 
     @Override
-    public List<Customer> getUsers() throws SQLException {
+    public List<Customer> getCustomers() throws SQLException {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT * FROM users;";
         Statement statement = connection.createStatement();
@@ -66,7 +66,7 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer getUserById(int id) throws SQLException {
+    public Customer getCustomerById(int id) throws SQLException {
         String sql = "SELECT * FROM customers WHERE id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setInt(1, id);
@@ -77,6 +77,23 @@ public class CustomerDaoImpl implements CustomerDao {
         customer.setId(resultSet.getInt(1));
         customer.setName(resultSet.getString(2));
         customer.setUsername(resultSet.getString(3));
+
+        return customer;
+    }
+
+    @Override
+    public Customer getCustomerByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM customers WHERE username = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, username);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        Customer customer = new Customer();
+        //  id | name        | username    | password | active
+        customer.setId(resultSet.getInt(1));
+        customer.setName(resultSet.getString(2));
+        customer.setUsername(resultSet.getString(3));
+        customer.setActive(resultSet.getBoolean(4));
 
         return customer;
     }
@@ -110,17 +127,17 @@ public class CustomerDaoImpl implements CustomerDao {
 
         }
 
-    public void customerPortal(Scanner scanner) {
+    public void customerPortal(Scanner scanner, Customer customer) {
         AccountDao accountDao = AccountDaoFactory.getAccountDao();
 
         System.out.println();
         System.out.println("    * Press 1: Apply for a new account.");
         System.out.println("    * Press 2: View all your accounts.");
-        System.out.println("    * Press 2: View Balance");
-        System.out.println("    * Press 3: Make a withdrawal");
-        System.out.println("    * Press 4: Make a deposit");
-        System.out.println("    * Press 5: Transfer To Another Account");
-        System.out.println("    * Press 6: Exit");
+        System.out.println("    * Press 3: View Balance");
+        System.out.println("    * Press 4: Make a withdrawal");
+        System.out.println("    * Press 5: Make a deposit");
+        System.out.println("    * Press 6: Transfer To Another Account");
+        System.out.println("    * Press 7: Exit");
 
 //      • * As a customer, I can apply for a new bank account with a starting balance.
 //      • * As a customer, I can view the balance of a specific account.
@@ -150,6 +167,14 @@ public class CustomerDaoImpl implements CustomerDao {
                         }
                         break;
                     case 2:
+                        // View all logged in customer's accounts
+                        try {
+                            this.printAllCustomersAccounts(customer);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 3:
                         // View Balance
                         System.out.println("Enter your account number");
                         accountNumber = scanner.next();
@@ -163,16 +188,16 @@ public class CustomerDaoImpl implements CustomerDao {
                         }
                         System.out.print("Select what would you like to do next.... ");
                         break;
-                    case 3:
+                    case 4:
                         // Make a withdrawal
                         break;
-                    case 4:
+                    case 5:
                         // Make a deposit
                         break;
-                    case 5:
+                    case 6:
                         // Transfer To Another Account
                         break;
-                    case 6:
+                    case 7:
                         // Exit
                         customerportal = false;
                         break;
@@ -182,6 +207,26 @@ public class CustomerDaoImpl implements CustomerDao {
                 System.out.println("Please enter correct entry. Choose between 1 to 4");
             }
         }
+    }
+
+    @Override
+    public void printAllCustomersAccounts(Customer customer) throws SQLException {
+        String sql = "SELECT accounts.account_number FROM accounts" +
+                " INNER JOIN registered ON accounts.id = registered.customer_id" +
+                " WHERE registered.customer_id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, customer.getId());
+        //System.out.println(preparedStatement.toString());
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        customer = new Customer();
+        // id | name      | username  | password | type
+        resultSet.next();
+
+        while (resultSet.next()) {
+            System.out.println(resultSet.getString(1));
+        }
+
     }
 
 }

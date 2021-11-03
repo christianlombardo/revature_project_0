@@ -8,17 +8,21 @@ public interface CustomerDao {
 
     boolean addUser(Customer customer) throws SQLException;
 
-    void updateUser(Customer customer) throws SQLException;
+    void updateCustomer(Customer customer) throws SQLException;
 
-    void deleteUser(Customer customer) throws SQLException;
+    void deleteCustomer(Customer customer) throws SQLException;
 
-    List<Customer> getUsers() throws SQLException;
+    List<Customer> getCustomers() throws SQLException;
 
-    Customer getUserById(int id) throws SQLException;
+    Customer getCustomerById(int id) throws SQLException;
+
+    Customer getCustomerByUsername(String username) throws SQLException;
 
     boolean customerLogin(Customer customer) throws SQLException;
 
-    void customerPortal(Scanner scanner);
+    void customerPortal(Scanner scanner, Customer customer);
+
+    void printAllCustomersAccounts(Customer customer) throws SQLException;
 
 
 }
