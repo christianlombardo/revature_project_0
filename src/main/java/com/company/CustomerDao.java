@@ -20,8 +20,6 @@ public interface CustomerDao {
 
     boolean customerLogin(Customer customer) throws SQLException;
 
-    void customerPortal(Scanner scanner, Customer customer);
-
     void printAllCustomersAccounts(Customer customer) throws SQLException;
 
 
